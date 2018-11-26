@@ -1,4 +1,6 @@
 import execa from "execa";
+import fetch from "node-fetch";
+import fs from "fs";
 
 (async () => {
   await execa("npm", ["install", "typescript", "@types/node", "--save-dev"]);
@@ -26,4 +28,9 @@ import execa from "execa";
     "husky",
     "--save-dev"
   ]);
+
+  const stream = fs.createWriteStream(".gitignore");
+  stream.write("build/\r\n");
+  const gitignore_io = await fetch("https://www.gitignore.io/api/node");
+  gitignore_io.body.pipe(stream);
 })();
