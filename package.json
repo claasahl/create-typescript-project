@@ -1,13 +1,18 @@
 {
   "name": "create-typescript-project",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "version": "0.1.0",
+  "description": "create simple, opiniated typescript projects",
+  "main": "build/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsc",
+    "test": "echo \"Warn: no test specified\""
   },
   "keywords": [],
-  "author": "",
+  "author": {
+    "name": "Claas Ahlrichs",
+    "email": "claasahl@gmail.com",
+    "url": "https://github.com/claasahl"
+  },
   "license": "ISC",
   "dependencies": {
     "execa": "^1.0.0",
