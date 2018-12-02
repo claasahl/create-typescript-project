@@ -1,8 +1,8 @@
 {
   "name": "create-typescript-project",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "create simple, opiniated typescript projects",
-  "bin": "build/index.js",
+  "bin": "./build/index.js",
   "scripts": {
     "build": "tsc",
     "test": "echo \"Warn: no test specified\""
@@ -27,6 +27,9 @@
     "pretty-quick": "^1.8.0",
     "typescript": "^3.2.2"
   },
+  "files": [
+    "/build"
+  ],
   "husky": {
     "hooks": {
       "pre-commit": "pretty-quick --staged"
