@@ -6,3 +6,4 @@ deploy:
   provider: npm
   email: "claasahl@gmail.com"
   api_key: "dedd785d-a25c-42a2-a833-934557762d8d"
+  skip_cleanup: true
