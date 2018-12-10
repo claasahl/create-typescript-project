@@ -4,4 +4,6 @@ node_js:
   - "lts/*"
 deploy:
   provider: npm
+  email: $DEPLOY_NPM_EMAIL
+  api_key: $DEPLOY_NPM_API_KEY
   skip_cleanup: true
