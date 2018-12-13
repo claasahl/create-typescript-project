@@ -31,7 +31,8 @@
     "typescript": "^3.2.2"
   },
   "files": [
-    "build/"
+    "build/",
+    "src/"
   ],
   "husky": {
     "hooks": {
