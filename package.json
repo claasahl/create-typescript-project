@@ -1,7 +1,8 @@
 {
   "name": "create-typescript-project",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "create simple, opiniated typescript projects",
+  "bin": "build/index.js",
   "scripts": {
     "build": "tsc",
     "test": "echo \"Warn: no test specified\""
