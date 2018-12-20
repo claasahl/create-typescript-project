@@ -2,7 +2,6 @@ language: node_js
 node_js:
   - "node"
   - "lts/*"
-before_deploy: "npm run build"
 deploy:
   provider: npm
   email: $DEPLOY_NPM_EMAIL
