@@ -1,2 +1,4 @@
 #!/usr/bin/env node
-console.log("hello world");
+import execa from "execa";
+
+execa("echo", ["hello world"]).stdout.pipe(process.stdout);
