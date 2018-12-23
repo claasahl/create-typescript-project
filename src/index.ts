@@ -1,4 +1,7 @@
 #!/usr/bin/env node
 import execa from "execa";
 
-execa("echo", ["hello world"]).stdout.pipe(process.stdout);
+(async () => {
+  const { stdout } = await execa("echo", ["hello world"]);
+  console.log(stdout);
+})();
