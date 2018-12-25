@@ -1,5 +1,20 @@
 #!/usr/bin/env node
 "use strict";
+var __assign =
+  (this && this.__assign) ||
+  function() {
+    __assign =
+      Object.assign ||
+      function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+          s = arguments[i];
+          for (var p in s)
+            if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+        }
+        return t;
+      };
+    return __assign.apply(this, arguments);
+  };
 var __awaiter =
   (this && this.__awaiter) ||
   function(thisArg, _arguments, P, generator) {
@@ -136,16 +151,52 @@ var __importDefault =
 var _this = this;
 Object.defineProperty(exports, "__esModule", { value: true });
 var execa_1 = __importDefault(require("execa"));
+var jsonfile_1 = __importDefault(require("jsonfile"));
+var PACKAGE_JSON = "package.json";
 (function() {
   return __awaiter(_this, void 0, void 0, function() {
-    var stdout;
+    var husky, pkg;
     return __generator(this, function(_a) {
       switch (_a.label) {
         case 0:
-          return [4 /*yield*/, execa_1.default("echo", ["hello world"])];
+          return [
+            4 /*yield*/,
+            execa_1.default("npm", [
+              "install",
+              "typescript",
+              "@types/node",
+              "--save-dev"
+            ])
+          ];
         case 1:
-          stdout = _a.sent().stdout;
-          console.log(stdout);
+          _a.sent();
+          return [4 /*yield*/, execa_1.default("tsc", ["--init"])];
+        case 2:
+          _a.sent();
+          return [
+            4 /*yield*/,
+            execa_1.default("npm", [
+              "install",
+              "prettier",
+              "pretty-quick",
+              "husky",
+              "--save-dev"
+            ])
+          ];
+        case 3:
+          _a.sent();
+          husky = {
+            husky: {
+              hooks: {
+                "pre-commit": "pretty-quick --staged"
+              }
+            }
+          };
+          pkg = jsonfile_1.default.readFileSync(PACKAGE_JSON);
+          jsonfile_1.default.writeFileSync(
+            PACKAGE_JSON,
+            __assign({}, husky, pkg)
+          );
           return [2 /*return*/];
       }
     });
