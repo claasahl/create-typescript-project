@@ -14,7 +14,7 @@ const dir = process.cwd();
 // extra stuff that gets put into the PromZard module's context.
 // In npm, this is the resolved config object.  Exposed as 'config'
 // Optional.
-const configData = { yes: false };
+const configData = { yes: true };
 
 // Any existing stuff from the package.json file is also exposed in the
 // PromZard module as the `package` object.  There will also be free
