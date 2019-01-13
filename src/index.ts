@@ -2,6 +2,7 @@
 import execa from "execa";
 import init from "init-package-json";
 import path from "path";
+import fs from "fs";
 
 const HOME = process.env.HOME || ".";
 // a path to a promzard module.  In the event that this file is
@@ -26,8 +27,23 @@ const configData = { yes: true, silent: true };
 init(dir, initFile, configData, function(_er, _data) {
   // the data's already been written to {dir}/package.json
   // now you can do stuff with it
+  const packageFile = path.resolve(dir, "package.json");
+  const husky = {
+    hooks: {
+      "pre-commit": "pretty-quick --staged"
+    }
+  };
+  fs.writeFileSync(packageFile, { husky, ..._data });
+
   (async () => {
     await execa("npm", ["install", "typescript", "@types/node", "--save-dev"]);
     await execa("tsc", ["--init"]);
+    await execa("npm", [
+      "install",
+      "prettier",
+      "pretty-quick",
+      "husky",
+      "--save-dev"
+    ]);
   })();
 });
