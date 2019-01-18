@@ -22,14 +22,8 @@
   },
   "homepage": "https://github.com/claasahl/create-typescript-project#readme",
   "devDependencies": {
-    "@types/execa": "^0.9.0",
     "@types/init-package-json": "^1.10.0",
-    "@types/jsonfile": "^5.0.0",
-    "@types/node": "^10.12.21",
-    "husky": "^1.3.1",
-    "prettier": "^1.16.3",
-    "pretty-quick": "^1.10.0",
-    "typescript": "^3.3.1"
+    "init-package-json": "^1.10.3"
   },
   "husky": {
     "hooks": {
@@ -37,8 +31,13 @@
     }
   },
   "dependencies": {
+    "@types/execa": "^0.9.0",
+    "@types/node": "^10.12.21",
     "execa": "^1.0.0",
-    "init-package-json": "^1.10.3",
-    "jsonfile": "^5.0.0"
+    "husky": "^1.3.1",
+    "jsonfile": "^5.0.0",
+    "prettier": "^1.16.3",
+    "pretty-quick": "^1.10.0",
+    "typescript": "^3.3.1"
   }
 }
