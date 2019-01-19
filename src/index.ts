@@ -3,6 +3,7 @@ import execa from "execa";
 import init from "init-package-json";
 import path from "path";
 import fs from "fs";
+import fetch from "node-fetch";
 
 const HOME = process.env.HOME || ".";
 // a path to a promzard module.  In the event that this file is
@@ -45,5 +46,9 @@ init(dir, initFile, configData, function(_er, _data) {
       "husky",
       "--save-dev"
     ]);
+
+    const dest = fs.createWriteStream(".gitignore");
+    const res = await fetch("https://gitignore.io/api/node");
+    res.body.pipe(dest);
   })();
 });
