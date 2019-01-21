@@ -153,6 +153,7 @@ var execa_1 = __importDefault(require("execa"));
 var init_package_json_1 = __importDefault(require("init-package-json"));
 var path_1 = __importDefault(require("path"));
 var fs_1 = __importDefault(require("fs"));
+var node_fetch_1 = __importDefault(require("node-fetch"));
 var HOME = process.env.HOME || ".";
 // a path to a promzard module.  In the event that this file is
 // not found, one will be provided for you.
@@ -185,6 +186,7 @@ init_package_json_1.default(dir, initFile, configData, function(_er, _data) {
   );
   (function() {
     return __awaiter(_this, void 0, void 0, function() {
+      var dest, res;
       return __generator(this, function(_a) {
         switch (_a.label) {
           case 0:
@@ -214,6 +216,14 @@ init_package_json_1.default(dir, initFile, configData, function(_er, _data) {
             ];
           case 3:
             _a.sent();
+            dest = fs_1.default.createWriteStream(".gitignore");
+            return [
+              4 /*yield*/,
+              node_fetch_1.default("https://gitignore.io/api/node")
+            ];
+          case 4:
+            res = _a.sent();
+            res.body.pipe(dest);
             return [2 /*return*/];
         }
       });
