@@ -25,7 +25,7 @@ const configData = { yes: true, silent: true };
 // * `basename` the tip of the package dir
 // * `dirname` the parent of the package dir
 
-init(dir, initFile, configData, function(_er, _data) {
+init(dir, initFile, configData, function(_er, data) {
   // the data's already been written to {dir}/package.json
   // now you can do stuff with it
   const packageFile = path.resolve(dir, "package.json");
@@ -34,7 +34,14 @@ init(dir, initFile, configData, function(_er, _data) {
       "pre-commit": "pretty-quick --staged"
     }
   };
-  fs.writeFileSync(packageFile, JSON.stringify({ husky, ..._data }, null, 2));
+  const scripts = {
+    ...data.scripts,
+    build: "tsc"
+  };
+  fs.writeFileSync(
+    packageFile,
+    JSON.stringify({ ...data, scripts, husky }, null, 2)
+  );
 
   (async () => {
     await execa("npm", ["install", "typescript", "@types/node", "--save-dev"]);
