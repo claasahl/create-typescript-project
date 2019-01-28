@@ -4,6 +4,7 @@ import init from "init-package-json";
 import path from "path";
 import fs from "fs";
 import fetch from "node-fetch";
+import git from "isomorphic-git";
 
 const HOME = process.env.HOME || ".";
 // a path to a promzard module.  In the event that this file is
@@ -36,7 +37,9 @@ init(dir, initFile, configData, function(_er, data) {
   };
   const scripts = {
     ...data.scripts,
-    build: "tsc"
+    prepare: "tsc",
+    build: "tsc",
+    start: "node build/hello-world.ts"
   };
   fs.writeFileSync(
     packageFile,
@@ -45,7 +48,7 @@ init(dir, initFile, configData, function(_er, data) {
 
   (async () => {
     await execa("npm", ["install", "typescript", "@types/node", "--save-dev"]);
-    await execa("tsc", ["--init"]);
+    await execa("tsc", ["--init", "--outDir", "build"]);
     await execa("npm", [
       "install",
       "prettier",
@@ -57,5 +60,18 @@ init(dir, initFile, configData, function(_er, data) {
     const dest = fs.createWriteStream(".gitignore");
     const res = await fetch("https://gitignore.io/api/node");
     res.body.pipe(dest);
+
+    fs.mkdirSync(dir + "/src");
+    fs.copyFileSync(
+      dir + "/node_modules/create-typescript-project/src/hello-world.ts",
+      dir + "/src/hello-world.ts"
+    );
+
+    git.plugins.set("fs", fs);
+    await git.init({ dir });
+    await git.add({ dir, filepath: ".gitignore" });
+    await git.add({ dir, filepath: "package.json" });
+    await git.add({ dir, filepath: "package-lock.json" });
+    await git.add({ dir, filepath: "tsconfig.json" });
   })();
 });
