@@ -62,9 +62,11 @@ init(dir, initFile, configData, function(_er, data) {
     res.body.pipe(dest);
 
     fs.mkdirSync(dir + "/src");
-    fs.copyFileSync(
-      dir + "/node_modules/create-typescript-project/src/hello-world.ts",
-      dir + "/src/hello-world.ts"
+    fs.writeFileSync(
+      dir + "/src/hello-world.ts",
+      `// happy coding 👻
+    console.log("hello world");
+    `
     );
 
     git.plugins.set("fs", fs);
