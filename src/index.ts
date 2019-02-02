@@ -4,7 +4,7 @@ import init from "init-package-json";
 import path from "path";
 import fs from "fs";
 import fetch from "node-fetch";
-import git from "isomorphic-git";
+import * as git from "isomorphic-git";
 
 const HOME = process.env.HOME || ".";
 // a path to a promzard module.  In the event that this file is
@@ -39,7 +39,7 @@ init(dir, initFile, configData, function(_er, data) {
     ...data.scripts,
     prepare: "tsc",
     build: "tsc",
-    start: "node build/hello-world.ts"
+    start: "ts-node src/hello-world.ts"
   };
   fs.writeFileSync(
     packageFile,
@@ -65,7 +65,7 @@ init(dir, initFile, configData, function(_er, data) {
     fs.writeFileSync(
       dir + "/src/hello-world.ts",
       `// happy coding 👻
-    console.log("hello world");
+console.log("hello world");
     `
     );
 
