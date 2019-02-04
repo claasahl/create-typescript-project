@@ -47,6 +47,9 @@ init(dir, initFile, configData, function(_er, data) {
   );
 
   (async () => {
+    git.plugins.set("fs", fs);
+    await git.init({ dir });
+
     await execa("npm", ["install", "typescript", "@types/node", "--save-dev"]);
     await execa("tsc", ["--init", "--outDir", "build"]);
     await execa("npm", [
@@ -54,6 +57,7 @@ init(dir, initFile, configData, function(_er, data) {
       "prettier",
       "pretty-quick",
       "husky",
+      "ts-node",
       "--save-dev"
     ]);
 
@@ -65,15 +69,18 @@ init(dir, initFile, configData, function(_er, data) {
     fs.writeFileSync(
       dir + "/src/hello-world.ts",
       `// happy coding 👻
-console.log("hello world");
-    `
+      console.log("hello world");`
     );
 
-    git.plugins.set("fs", fs);
-    await git.init({ dir });
     await git.add({ dir, filepath: ".gitignore" });
     await git.add({ dir, filepath: "package.json" });
     await git.add({ dir, filepath: "package-lock.json" });
     await git.add({ dir, filepath: "tsconfig.json" });
+    await git.add({ dir, filepath: "src/hello-world.ts" });
+    await git.commit({
+      dir,
+      message: "Initial Commit 👻",
+      author: { name: "create-typescript-project", email: "no-email@inter.net" }
+    });
   })();
 });
