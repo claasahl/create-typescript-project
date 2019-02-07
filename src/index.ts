@@ -63,6 +63,9 @@ init(dir, initFile, configData, function(_er, data) {
 
     const dest = fs.createWriteStream(".gitignore");
     const res = await fetch("https://gitignore.io/api/node");
+    dest.write(`build/
+    
+    `);
     res.body.pipe(dest);
 
     fs.mkdirSync(dir + "/src");
