@@ -14,7 +14,13 @@
     "type": "git",
     "url": "git+https://github.com/claasahl/create-typescript-project.git"
   },
-  "keywords": [],
+  "keywords": [
+    "typescript",
+    "init",
+    "ts",
+    "bootstrap",
+    "generate"
+  ],
   "author": {
     "name": "Claas Ahlrichs",
     "email": "claasahl@gmail.com",
