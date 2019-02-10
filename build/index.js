@@ -1,20 +1,5 @@
 #!/usr/bin/env node
 "use strict";
-var __assign =
-  (this && this.__assign) ||
-  function() {
-    __assign =
-      Object.assign ||
-      function(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-          s = arguments[i];
-          for (var p in s)
-            if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
-        }
-        return t;
-      };
-    return __assign.apply(this, arguments);
-  };
 var __awaiter =
   (this && this.__awaiter) ||
   function(thisArg, _arguments, P, generator) {
@@ -148,58 +133,53 @@ var __importDefault =
   function(mod) {
     return mod && mod.__esModule ? mod : { default: mod };
   };
-var _this = this;
 Object.defineProperty(exports, "__esModule", { value: true });
 var execa_1 = __importDefault(require("execa"));
-var jsonfile_1 = __importDefault(require("jsonfile"));
-var PACKAGE_JSON = "package.json";
-(function() {
-  return __awaiter(_this, void 0, void 0, function() {
-    var husky, pkg;
-    return __generator(this, function(_a) {
-      switch (_a.label) {
-        case 0:
-          return [
-            4 /*yield*/,
-            execa_1.default("npm", [
-              "install",
-              "typescript",
-              "@types/node",
-              "--save-dev"
-            ])
-          ];
-        case 1:
-          _a.sent();
-          return [4 /*yield*/, execa_1.default("tsc", ["--init"])];
-        case 2:
-          _a.sent();
-          return [
-            4 /*yield*/,
-            execa_1.default("npm", [
-              "install",
-              "prettier",
-              "pretty-quick",
-              "husky",
-              "--save-dev"
-            ])
-          ];
-        case 3:
-          _a.sent();
-          husky = {
-            husky: {
-              hooks: {
-                "pre-commit": "pretty-quick --staged"
-              }
-            }
-          };
-          pkg = jsonfile_1.default.readFileSync(PACKAGE_JSON);
-          jsonfile_1.default.writeFileSync(
-            PACKAGE_JSON,
-            __assign({}, husky, pkg)
-          );
-          return [2 /*return*/];
-      }
+var init_package_json_1 = __importDefault(require("init-package-json"));
+var path_1 = __importDefault(require("path"));
+var HOME = process.env.HOME || ".";
+// a path to a promzard module.  In the event that this file is
+// not found, one will be provided for you.
+var initFile = path_1.default.resolve(HOME, ".npm-init");
+// the dir where we're doin stuff.
+var dir = process.cwd();
+// extra stuff that gets put into the PromZard module's context.
+// In npm, this is the resolved config object.  Exposed as 'config'
+// Optional.
+var configData = { some: "extra stuff" };
+// Any existing stuff from the package.json file is also exposed in the
+// PromZard module as the `package` object.  There will also be free
+// vars for:
+// * `filename` path to the package.json file
+// * `basename` the tip of the package dir
+// * `dirname` the parent of the package dir
+init_package_json_1.default(dir, initFile, configData, function(_er, _data) {
+  var _this = this;
+  // the data's already been written to {dir}/package.json
+  // now you can do stuff with it
+  (function() {
+    return __awaiter(_this, void 0, void 0, function() {
+      return __generator(this, function(_a) {
+        switch (_a.label) {
+          case 0:
+            return [
+              4 /*yield*/,
+              execa_1.default("npm", [
+                "install",
+                "typescript",
+                "@types/node",
+                "--save-dev"
+              ])
+            ];
+          case 1:
+            _a.sent();
+            return [4 /*yield*/, execa_1.default("tsc", ["--init"])];
+          case 2:
+            _a.sent();
+            return [2 /*return*/];
+        }
+      });
     });
-  });
-})();
+  })();
+});
 //# sourceMappingURL=index.js.map
