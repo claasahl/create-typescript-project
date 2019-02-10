@@ -33,7 +33,7 @@ init(dir, initFile, configData, function(_er, _data) {
       "pre-commit": "pretty-quick --staged"
     }
   };
-  fs.writeFileSync(packageFile, { husky, ..._data });
+  fs.writeFileSync(packageFile, JSON.stringify({ husky, ..._data }, null, 2));
 
   (async () => {
     await execa("npm", ["install", "typescript", "@types/node", "--save-dev"]);

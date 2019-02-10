@@ -179,7 +179,10 @@ init_package_json_1.default(dir, initFile, configData, function(_er, _data) {
       "pre-commit": "pretty-quick --staged"
     }
   };
-  fs_1.default.writeFileSync(packageFile, __assign({ husky: husky }, _data));
+  fs_1.default.writeFileSync(
+    packageFile,
+    JSON.stringify(__assign({ husky: husky }, _data), null, 2)
+  );
   (function() {
     return __awaiter(_this, void 0, void 0, function() {
       return __generator(this, function(_a) {
