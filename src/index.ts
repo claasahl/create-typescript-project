@@ -47,9 +47,6 @@ init(dir, initFile, configData, function(_er, data) {
   );
 
   (async () => {
-    git.plugins.set("fs", fs);
-    await git.init({ dir });
-
     await execa("npm", ["install", "typescript", "@types/node", "--save-dev"]);
     await execa("tsc", ["--init", "--outDir", "build"]);
     await execa("npm", [
@@ -72,6 +69,8 @@ init(dir, initFile, configData, function(_er, data) {
       console.log("hello world");`
     );
 
+    git.plugins.set("fs", fs);
+    await git.init({ dir });
     await git.add({ dir, filepath: ".gitignore" });
     await git.add({ dir, filepath: "package.json" });
     await git.add({ dir, filepath: "package-lock.json" });
