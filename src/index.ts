@@ -17,7 +17,7 @@ const dir = process.cwd();
 // extra stuff that gets put into the PromZard module's context.
 // In npm, this is the resolved config object.  Exposed as 'config'
 // Optional.
-const configData = { yes: true, silent: false };
+const configData = { yes: true, silent: true };
 
 // Any existing stuff from the package.json file is also exposed in the
 // PromZard module as the `package` object.  There will also be free
@@ -52,7 +52,7 @@ init(dir, initFile, configData, function(_er, data) {
 
     await execa("npm", ["install", "typescript", "@types/node", "--save-dev"]);
     await execa("tsc", ["--init", "--outDir", "build"]);
-    await execa("npm", [
+    const ttt = execa("npm", [
       "install",
       "prettier",
       "pretty-quick",
@@ -60,6 +60,9 @@ init(dir, initFile, configData, function(_er, data) {
       "ts-node",
       "--save-dev"
     ]);
+    ttt.stderr.pipe(process.stderr);
+    ttt.stdout.pipe(process.stdout);
+    await ttt;
 
     const dest = fs.createWriteStream(".gitignore");
     const res = await fetch("https://gitignore.io/api/node");
