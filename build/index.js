@@ -148,86 +148,165 @@ var __importDefault =
   function(mod) {
     return mod && mod.__esModule ? mod : { default: mod };
   };
+var __importStar =
+  (this && this.__importStar) ||
+  function(mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null)
+      for (var k in mod)
+        if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+  };
+var _this = this;
 Object.defineProperty(exports, "__esModule", { value: true });
 var execa_1 = __importDefault(require("execa"));
-var init_package_json_1 = __importDefault(require("init-package-json"));
 var path_1 = __importDefault(require("path"));
 var fs_1 = __importDefault(require("fs"));
 var node_fetch_1 = __importDefault(require("node-fetch"));
-var HOME = process.env.HOME || ".";
-// a path to a promzard module.  In the event that this file is
-// not found, one will be provided for you.
-var initFile = path_1.default.resolve(HOME, ".npm-init");
+var git = __importStar(require("isomorphic-git"));
+var chalk_1 = __importDefault(require("chalk"));
+var jsonfile_1 = __importDefault(require("jsonfile"));
 // the dir where we're doin stuff.
 var dir = process.cwd();
-// extra stuff that gets put into the PromZard module's context.
-// In npm, this is the resolved config object.  Exposed as 'config'
-// Optional.
-var configData = { yes: true, silent: true };
-// Any existing stuff from the package.json file is also exposed in the
-// PromZard module as the `package` object.  There will also be free
-// vars for:
-// * `filename` path to the package.json file
-// * `basename` the tip of the package dir
-// * `dirname` the parent of the package dir
-init_package_json_1.default(dir, initFile, configData, function(_er, _data) {
-  var _this = this;
-  // the data's already been written to {dir}/package.json
-  // now you can do stuff with it
-  var packageFile = path_1.default.resolve(dir, "package.json");
-  var husky = {
-    hooks: {
-      "pre-commit": "pretty-quick --staged"
-    }
-  };
-  fs_1.default.writeFileSync(
-    packageFile,
-    JSON.stringify(__assign({ husky: husky }, _data), null, 2)
-  );
-  (function() {
-    return __awaiter(_this, void 0, void 0, function() {
-      var dest, res;
-      return __generator(this, function(_a) {
-        switch (_a.label) {
-          case 0:
-            return [
-              4 /*yield*/,
-              execa_1.default("npm", [
-                "install",
-                "typescript",
-                "@types/node",
-                "--save-dev"
-              ])
-            ];
-          case 1:
-            _a.sent();
-            return [4 /*yield*/, execa_1.default("tsc", ["--init"])];
-          case 2:
-            _a.sent();
-            return [
-              4 /*yield*/,
-              execa_1.default("npm", [
-                "install",
-                "prettier",
-                "pretty-quick",
-                "husky",
-                "--save-dev"
-              ])
-            ];
-          case 3:
-            _a.sent();
-            dest = fs_1.default.createWriteStream(".gitignore");
-            return [
-              4 /*yield*/,
-              node_fetch_1.default("https://gitignore.io/api/node")
-            ];
-          case 4:
-            res = _a.sent();
-            res.body.pipe(dest);
-            return [2 /*return*/];
-        }
-      });
+var husky = {
+  hooks: {
+    "pre-commit": "pretty-quick --staged"
+  }
+};
+var scripts = {
+  prepare: "tsc",
+  build: "tsc",
+  start: "ts-node src/hello-world.ts"
+};
+(function() {
+  return __awaiter(_this, void 0, void 0, function() {
+    var packageFile, packageJson, dest, res;
+    return __generator(this, function(_a) {
+      switch (_a.label) {
+        case 0:
+          git.plugins.set("fs", fs_1.default);
+          return [4 /*yield*/, git.init({ dir: dir })];
+        case 1:
+          _a.sent();
+          process.stdout.write(
+            "Bootstrapping " + chalk_1.default.magenta("package.json") + " ... "
+          );
+          return [4 /*yield*/, execa_1.default("npm", ["init", "--yes"])];
+        case 2:
+          _a.sent();
+          packageFile = path_1.default.resolve(dir, "package.json");
+          return [4 /*yield*/, jsonfile_1.default.readFile(packageFile)];
+        case 3:
+          packageJson = _a.sent();
+          packageJson.scripts = __assign({}, packageJson.scripts, scripts);
+          return [
+            4 /*yield*/,
+            jsonfile_1.default.writeFile(
+              packageFile,
+              __assign({}, packageJson, { husky: husky })
+            )
+          ];
+        case 4:
+          _a.sent();
+          process.stdout.write("Done\r\n");
+          process.stdout.write(
+            "Installing " + chalk_1.default.magenta("typescript") + " ... "
+          );
+          return [
+            4 /*yield*/,
+            execa_1.default("npm", [
+              "install",
+              "typescript",
+              "@types/node",
+              "ts-node",
+              "--save-dev"
+            ])
+          ];
+        case 5:
+          _a.sent();
+          return [
+            4 /*yield*/,
+            execa_1.default("tsc", ["--init", "--outDir", "build"])
+          ];
+        case 6:
+          _a.sent();
+          process.stdout.write("Done\r\n");
+          process.stdout.write(
+            "Installing " +
+              chalk_1.default.magenta("prettier / pretty-quick") +
+              " ... "
+          );
+          return [
+            4 /*yield*/,
+            execa_1.default("npm", [
+              "install",
+              "prettier",
+              "pretty-quick",
+              "husky",
+              "--save-dev"
+            ])
+          ];
+        case 7:
+          _a.sent();
+          process.stdout.write("Done\r\n");
+          process.stdout.write(
+            "Bootstrapping " + chalk_1.default.magenta(".gitignore") + " ... "
+          );
+          dest = fs_1.default.createWriteStream(".gitignore");
+          return [
+            4 /*yield*/,
+            node_fetch_1.default("https://gitignore.io/api/node")
+          ];
+        case 8:
+          res = _a.sent();
+          dest.write("build/\r\n\r\n");
+          res.body.pipe(dest);
+          process.stdout.write("Done\r\n");
+          process.stdout.write(
+            "Bootstrapping " +
+              chalk_1.default.magenta("'hello world'-sample") +
+              " ... "
+          );
+          fs_1.default.mkdirSync(dir + "/src");
+          fs_1.default.writeFileSync(
+            dir + "/src/hello-world.ts",
+            '// happy coding 👻\r\nconsole.log("hello world");'
+          );
+          process.stdout.write("Done\r\n");
+          process.stdout.write(
+            "Staging " + chalk_1.default.magenta("files") + " ... "
+          );
+          return [4 /*yield*/, git.add({ dir: dir, filepath: ".gitignore" })];
+        case 9:
+          _a.sent();
+          return [4 /*yield*/, git.add({ dir: dir, filepath: "package.json" })];
+        case 10:
+          _a.sent();
+          return [
+            4 /*yield*/,
+            git.add({ dir: dir, filepath: "package-lock.json" })
+          ];
+        case 11:
+          _a.sent();
+          return [
+            4 /*yield*/,
+            git.add({ dir: dir, filepath: "tsconfig.json" })
+          ];
+        case 12:
+          _a.sent();
+          return [
+            4 /*yield*/,
+            git.add({ dir: dir, filepath: "src/hello-world.ts" })
+          ];
+        case 13:
+          _a.sent();
+          process.stdout.write("Done\r\n");
+          process.stdout.write("\r\nHappy hacking! 👽 👻 😃");
+          return [2 /*return*/];
+      }
     });
-  })();
-});
+  });
+})();
 //# sourceMappingURL=index.js.map

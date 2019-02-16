@@ -1,89 +1,85 @@
 #!/usr/bin/env node
 import execa from "execa";
-import init from "init-package-json";
 import path from "path";
 import fs from "fs";
 import fetch from "node-fetch";
 import * as git from "isomorphic-git";
-
-const HOME = process.env.HOME || ".";
-// a path to a promzard module.  In the event that this file is
-// not found, one will be provided for you.
-const initFile = path.resolve(HOME, ".npm-init");
+import chalk from "chalk";
+import jsonfile from "jsonfile";
 
 // the dir where we're doin stuff.
 const dir = process.cwd();
 
-// extra stuff that gets put into the PromZard module's context.
-// In npm, this is the resolved config object.  Exposed as 'config'
-// Optional.
-const configData = { yes: true, silent: false };
+const husky = {
+  hooks: {
+    "pre-commit": "pretty-quick --staged"
+  }
+};
+const scripts = {
+  prepare: "tsc",
+  build: "tsc",
+  start: "ts-node src/hello-world.ts"
+};
 
-// Any existing stuff from the package.json file is also exposed in the
-// PromZard module as the `package` object.  There will also be free
-// vars for:
-// * `filename` path to the package.json file
-// * `basename` the tip of the package dir
-// * `dirname` the parent of the package dir
+(async () => {
+  git.plugins.set("fs", fs);
+  await git.init({ dir });
 
-init(dir, initFile, configData, function(_er, data) {
-  // the data's already been written to {dir}/package.json
-  // now you can do stuff with it
+  process.stdout.write(`Bootstrapping ${chalk.magenta("package.json")} ... `);
+  await execa("npm", ["init", "--yes"]);
   const packageFile = path.resolve(dir, "package.json");
-  const husky = {
-    hooks: {
-      "pre-commit": "pretty-quick --staged"
-    }
-  };
-  const scripts = {
-    ...data.scripts,
-    prepare: "tsc",
-    build: "tsc",
-    start: "ts-node src/hello-world.ts"
-  };
-  fs.writeFileSync(
-    packageFile,
-    JSON.stringify({ ...data, scripts, husky }, null, 2)
+  const packageJson = await jsonfile.readFile(packageFile);
+  packageJson.scripts = { ...packageJson.scripts, ...scripts };
+  await jsonfile.writeFile(packageFile, { ...packageJson, husky });
+  process.stdout.write("Done\r\n");
+
+  process.stdout.write(`Installing ${chalk.magenta("typescript")} ... `);
+  await execa("npm", [
+    "install",
+    "typescript",
+    "@types/node",
+    "ts-node",
+    "--save-dev"
+  ]);
+  await execa("tsc", ["--init", "--outDir", "build"]);
+  process.stdout.write("Done\r\n");
+
+  process.stdout.write(
+    `Installing ${chalk.magenta("prettier / pretty-quick")} ... `
   );
+  await execa("npm", [
+    "install",
+    "prettier",
+    "pretty-quick",
+    "husky",
+    "--save-dev"
+  ]);
+  process.stdout.write("Done\r\n");
 
-  (async () => {
-    git.plugins.set("fs", fs);
-    await git.init({ dir });
+  process.stdout.write(`Bootstrapping ${chalk.magenta(".gitignore")} ... `);
+  const dest = fs.createWriteStream(".gitignore");
+  const res = await fetch("https://gitignore.io/api/node");
+  dest.write("build/\r\n\r\n");
+  res.body.pipe(dest);
+  process.stdout.write("Done\r\n");
 
-    await execa("npm", ["install", "typescript", "@types/node", "--save-dev"]);
-    await execa("tsc", ["--init", "--outDir", "build"]);
-    const ttt = execa("npm", [
-      "install",
-      "prettier",
-      "pretty-quick",
-      "husky",
-      "ts-node",
-      "--save-dev"
-    ]);
-    ttt.stderr.pipe(process.stderr);
-    ttt.stdout.pipe(process.stdout);
-    await ttt;
+  process.stdout.write(
+    `Bootstrapping ${chalk.magenta("'hello world'-sample")} ... `
+  );
+  fs.mkdirSync(dir + "/src");
+  fs.writeFileSync(
+    dir + "/src/hello-world.ts",
+    '// happy coding 👻\r\nconsole.log("hello world");'
+  );
+  process.stdout.write("Done\r\n");
 
-    const dest = fs.createWriteStream(".gitignore");
-    const res = await fetch("https://gitignore.io/api/node");
-    dest.write("build/\r\n\r\n");
-    res.body.pipe(dest);
+  process.stdout.write(`Staging ${chalk.magenta("files")} ... `);
+  await git.add({ dir, filepath: ".gitignore" });
+  await git.add({ dir, filepath: "package.json" });
+  await git.add({ dir, filepath: "package-lock.json" });
+  await git.add({ dir, filepath: "tsconfig.json" });
+  await git.add({ dir, filepath: "src/hello-world.ts" });
+  process.stdout.write("Done\r\n");
 
-    fs.mkdirSync(dir + "/src");
-    fs.writeFileSync(
-      dir + "/src/hello-world.ts",
-      '// happy coding 👻\r\nconsole.log("hello world");'
-    );
-
-    await git.add({ dir, filepath: ".gitignore" });
-    await git.add({ dir, filepath: "package.json" });
-    await git.add({ dir, filepath: "package-lock.json" });
-    await git.add({ dir, filepath: "tsconfig.json" });
-    await git.add({ dir, filepath: "src/hello-world.ts" });
-    await git.commit({
-      dir,
-      message: "Initial Commit 😃",
-      author: { name: "create-typescript-project", email: "no-email@inter.net" }
-    });
-  })();
-});
+  process.stdout.write("\r\nHappy hacking! 👽 👻 😃");
+})();
