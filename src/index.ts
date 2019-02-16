@@ -17,7 +17,7 @@ const dir = process.cwd();
 // extra stuff that gets put into the PromZard module's context.
 // In npm, this is the resolved config object.  Exposed as 'config'
 // Optional.
-const configData = { yes: true, silent: true };
+const configData = { yes: true, silent: false };
 
 // Any existing stuff from the package.json file is also exposed in the
 // PromZard module as the `package` object.  There will also be free
@@ -63,16 +63,13 @@ init(dir, initFile, configData, function(_er, data) {
 
     const dest = fs.createWriteStream(".gitignore");
     const res = await fetch("https://gitignore.io/api/node");
-    dest.write(`build/
-    
-    `);
+    dest.write("build/\r\n\r\n");
     res.body.pipe(dest);
 
     fs.mkdirSync(dir + "/src");
     fs.writeFileSync(
       dir + "/src/hello-world.ts",
-      `// happy coding 👻
-      console.log("hello world");`
+      '// happy coding 👻\r\nconsole.log("hello world");'
     );
 
     await git.add({ dir, filepath: ".gitignore" });
@@ -82,7 +79,7 @@ init(dir, initFile, configData, function(_er, data) {
     await git.add({ dir, filepath: "src/hello-world.ts" });
     await git.commit({
       dir,
-      message: "Initial Commit 👻",
+      message: "Initial Commit 😃",
       author: { name: "create-typescript-project", email: "no-email@inter.net" }
     });
   })();
