@@ -18,7 +18,7 @@ const husky = {
 const scripts = {
   prepare: "tsc",
   build: "tsc",
-  start: "ts-node src/hello-world.ts"
+  start: "ts-node src/index.ts"
 };
 
 (async () => {
@@ -68,7 +68,7 @@ const scripts = {
   );
   fs.mkdirSync(dir + "/src");
   fs.writeFileSync(
-    dir + "/src/hello-world.ts",
+    dir + "/src/index.ts",
     '// happy coding 👻\r\nconsole.log("hello world");'
   );
   process.stdout.write("Done\r\n");
@@ -78,7 +78,7 @@ const scripts = {
   await git.add({ dir, filepath: "package.json" });
   await git.add({ dir, filepath: "package-lock.json" });
   await git.add({ dir, filepath: "tsconfig.json" });
-  await git.add({ dir, filepath: "src/hello-world.ts" });
+  await git.add({ dir, filepath: "src/index.ts" });
   process.stdout.write("Done\r\n");
 
   process.stdout.write("\r\nHappy hacking! 👽 👻 😃");
