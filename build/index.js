@@ -178,7 +178,7 @@ var husky = {
 var scripts = {
   prepare: "tsc",
   build: "tsc",
-  start: "ts-node src/hello-world.ts"
+  start: "ts-node src/index.ts"
 };
 (function() {
   return __awaiter(_this, void 0, void 0, function() {
@@ -271,7 +271,7 @@ var scripts = {
           );
           fs_1.default.mkdirSync(dir + "/src");
           fs_1.default.writeFileSync(
-            dir + "/src/hello-world.ts",
+            dir + "/src/index.ts",
             '// happy coding 👻\r\nconsole.log("hello world");'
           );
           process.stdout.write("Done\r\n");
@@ -296,10 +296,7 @@ var scripts = {
           ];
         case 12:
           _a.sent();
-          return [
-            4 /*yield*/,
-            git.add({ dir: dir, filepath: "src/hello-world.ts" })
-          ];
+          return [4 /*yield*/, git.add({ dir: dir, filepath: "src/index.ts" })];
         case 13:
           _a.sent();
           process.stdout.write("Done\r\n");
