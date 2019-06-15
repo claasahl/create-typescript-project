@@ -81,5 +81,5 @@ const scripts = {
   await git.add({ dir, filepath: "src/index.ts" });
   process.stdout.write("Done\r\n");
 
-  process.stdout.write("\r\nHappy hacking! 👽 👻 😃");
+  process.stdout.write("\r\nHappy hacking! 👽 👻 😃\r\n");
 })();
