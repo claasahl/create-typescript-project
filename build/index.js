@@ -300,7 +300,7 @@ var scripts = {
         case 13:
           _a.sent();
           process.stdout.write("Done\r\n");
-          process.stdout.write("\r\nHappy hacking! 👽 👻 😃");
+          process.stdout.write("\r\nHappy hacking! 👽 👻 😃\r\n");
           return [2 /*return*/];
       }
     });
