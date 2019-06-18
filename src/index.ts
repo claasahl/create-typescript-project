@@ -58,7 +58,7 @@ const scripts = {
 
   process.stdout.write(`Bootstrapping ${chalk.magenta(".gitignore")} ... `);
   const dest = fs.createWriteStream(".gitignore");
-  const res = await fetch("https://gitignore.io/api/node");
+  const res = await fetch("https://gitignore.io/api/node,macos");
   dest.write("build/\r\n\r\n");
   res.body.pipe(dest);
   process.stdout.write("Done\r\n");
