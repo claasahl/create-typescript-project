@@ -10,10 +10,7 @@ import { EOL } from "os";
 
 git.plugins.set("fs", fs);
 
-// the dir where we're doin stuff.
-const dir = process.cwd();
-
-async function initializeGitRepository(): Promise<void> {
+async function initializeGitRepository(dir: string): Promise<void> {
   try {
     await git.currentBranch({ dir });
     // ... probably already a git repository
@@ -23,7 +20,7 @@ async function initializeGitRepository(): Promise<void> {
   }
 }
 
-async function bootstrapPackageJson(): Promise<void> {
+async function bootstrapPackageJson(dir: string): Promise<void> {
   const husky = {
     hooks: {
       "pre-commit": "pretty-quick --staged"
@@ -43,6 +40,7 @@ async function bootstrapPackageJson(): Promise<void> {
   await jsonfile.writeFile(packageFile, { ...packageJson, husky });
   process.stdout.write("Done" + EOL);
 }
+
 async function installTypescript(): Promise<void> {
   process.stdout.write(`Installing ${chalk.magenta("typescript")} ... `);
   await execa("npm", [
@@ -79,7 +77,7 @@ async function bootstrapGitignore(): Promise<void> {
   process.stdout.write("Done" + EOL);
 }
 
-async function bootstrapSampleCode(): Promise<void> {
+async function bootstrapSampleCode(dir: string): Promise<void> {
   process.stdout.write(
     `Bootstrapping ${chalk.magenta("'hello world'-sample")} ... `
   );
@@ -91,7 +89,7 @@ async function bootstrapSampleCode(): Promise<void> {
   process.stdout.write("Done" + EOL);
 }
 
-async function stageFiles(): Promise<void> {
+async function stageFiles(dir: string): Promise<void> {
   process.stdout.write(`Staging ${chalk.magenta("files")} ... `);
   await git.add({ dir, filepath: ".gitignore" });
   await git.add({ dir, filepath: "package.json" });
@@ -106,12 +104,13 @@ async function happyHacking(): Promise<void> {
 }
 
 (async () => {
-  await initializeGitRepository();
-  await bootstrapPackageJson();
+  const dir = process.cwd();
+  await initializeGitRepository(dir);
+  await bootstrapPackageJson(dir);
   await installTypescript();
   await automatedCodeFormatting();
   await bootstrapGitignore();
-  await bootstrapSampleCode();
-  await stageFiles();
+  await bootstrapSampleCode(dir);
+  await stageFiles(dir);
   await happyHacking();
 })();
