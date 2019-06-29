@@ -46,7 +46,7 @@
     "@types/jsonfile": "^5.0.0",
     "@types/node": "^10.14.10",
     "chalk": "^2.4.2",
-    "execa": "^1.0.0",
+    "execa": "^2.0.1",
     "husky": "^2.7.0",
     "isomorphic-git": "^0.55.4",
     "jsonfile": "^5.0.0",
