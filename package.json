@@ -1,6 +1,6 @@
 {
   "name": "create-typescript-project",
-  "version": "0.4.3",
+  "version": "0.4.4",
   "description": "create simple, opiniated typescript projects",
   "bin": {
     "create-typescript-project": "build/index.js",
