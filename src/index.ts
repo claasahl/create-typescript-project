@@ -41,12 +41,12 @@ async function bootstrapPackageJson(dir: string): Promise<void> {
   process.stdout.write("Done" + EOL);
 }
 
-async function installTypescript(): Promise<void> {
+async function installTypescript(nodeVersion?: string): Promise<void> {
   process.stdout.write(`Installing ${chalk.magenta("typescript")} ... `);
   await execa("npm", [
     "install",
     "typescript",
-    "@types/node",
+    nodeVersion ? `@types/node@${nodeVersion}` : "@types/node",
     "ts-node",
     "--save-dev"
   ]);
@@ -104,10 +104,12 @@ async function happyHacking(): Promise<void> {
 }
 
 (async () => {
+  const matchedVersion = process.version.match(/v?([0-9]+)\..*/);
+  const nodeVersion = matchedVersion ? matchedVersion[1] : undefined;
   const dir = process.cwd();
   await initializeGitRepository(dir);
   await bootstrapPackageJson(dir);
-  await installTypescript();
+  await installTypescript(nodeVersion);
   await automatedCodeFormatting();
   await bootstrapGitignore();
   await bootstrapSampleCode(dir);
