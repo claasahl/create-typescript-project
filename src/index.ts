@@ -6,6 +6,7 @@ import fetch from "node-fetch";
 import * as git from "isomorphic-git";
 import chalk from "chalk";
 import jsonfile from "jsonfile";
+import { EOL } from "os";
 
 // the dir where we're doin stuff.
 const dir = process.cwd();
@@ -36,7 +37,7 @@ const scripts = {
   const packageJson = await jsonfile.readFile(packageFile);
   packageJson.scripts = { ...packageJson.scripts, ...scripts };
   await jsonfile.writeFile(packageFile, { ...packageJson, husky });
-  process.stdout.write("Done\r\n");
+  process.stdout.write("Done" + EOL);
 
   process.stdout.write(`Installing ${chalk.magenta("typescript")} ... `);
   await execa("npm", [
@@ -47,7 +48,7 @@ const scripts = {
     "--save-dev"
   ]);
   await execa("tsc", ["--init", "--outDir", "build"]);
-  process.stdout.write("Done\r\n");
+  process.stdout.write("Done" + EOL);
 
   process.stdout.write(
     `Installing ${chalk.magenta("prettier / pretty-quick")} ... `
@@ -59,14 +60,14 @@ const scripts = {
     "husky",
     "--save-dev"
   ]);
-  process.stdout.write("Done\r\n");
+  process.stdout.write("Done" + EOL);
 
   process.stdout.write(`Bootstrapping ${chalk.magenta(".gitignore")} ... `);
   const dest = fs.createWriteStream(".gitignore");
   const res = await fetch("https://gitignore.io/api/node,macos");
   dest.write("build/\r\n\r\n");
   res.body.pipe(dest);
-  process.stdout.write("Done\r\n");
+  process.stdout.write("Done" + EOL);
 
   process.stdout.write(
     `Bootstrapping ${chalk.magenta("'hello world'-sample")} ... `
@@ -74,9 +75,9 @@ const scripts = {
   fs.mkdirSync(dir + "/src");
   fs.writeFileSync(
     dir + "/src/index.ts",
-    '// happy coding 👻\r\nconsole.log("hello world");'
+    "// happy coding 👻" + EOL + 'console.log("hello world");'
   );
-  process.stdout.write("Done\r\n");
+  process.stdout.write("Done" + EOL);
 
   process.stdout.write(`Staging ${chalk.magenta("files")} ... `);
   await git.add({ dir, filepath: ".gitignore" });
@@ -84,7 +85,7 @@ const scripts = {
   await git.add({ dir, filepath: "package-lock.json" });
   await git.add({ dir, filepath: "tsconfig.json" });
   await git.add({ dir, filepath: "src/index.ts" });
-  process.stdout.write("Done\r\n");
+  process.stdout.write("Done" + EOL);
 
-  process.stdout.write("\r\nHappy hacking! 👽 👻 😃\r\n");
+  process.stdout.write(EOL + "Happy hacking! 👽 👻 😃" + EOL);
 })();
