@@ -6,29 +6,31 @@ import fetch from "node-fetch";
 import * as git from "isomorphic-git";
 import chalk from "chalk";
 import jsonfile from "jsonfile";
+import { EOL } from "os";
 
-// the dir where we're doin stuff.
-const dir = process.cwd();
+git.plugins.set("fs", fs);
 
-const husky = {
-  hooks: {
-    "pre-commit": "pretty-quick --staged"
-  }
-};
-const scripts = {
-  prepare: "tsc",
-  build: "tsc",
-  start: "ts-node src/index.ts"
-};
-
-(async () => {
-  git.plugins.set("fs", fs);
+async function initializeGitRepository(dir: string): Promise<void> {
   try {
     await git.currentBranch({ dir });
+    // ... probably already a git repository
   } catch {
     // ... probably not a git repository
     await git.init({ dir });
   }
+}
+
+async function bootstrapPackageJson(dir: string): Promise<void> {
+  const husky = {
+    hooks: {
+      "pre-commit": "pretty-quick --staged"
+    }
+  };
+  const scripts = {
+    prepare: "tsc",
+    build: "tsc",
+    start: "ts-node src/index.ts"
+  };
 
   process.stdout.write(`Bootstrapping ${chalk.magenta("package.json")} ... `);
   await execa("npm", ["init", "--yes"]);
@@ -36,19 +38,23 @@ const scripts = {
   const packageJson = await jsonfile.readFile(packageFile);
   packageJson.scripts = { ...packageJson.scripts, ...scripts };
   await jsonfile.writeFile(packageFile, { ...packageJson, husky });
-  process.stdout.write("Done\r\n");
+  process.stdout.write("Done" + EOL);
+}
 
+async function installTypescript(nodeVersion?: string): Promise<void> {
   process.stdout.write(`Installing ${chalk.magenta("typescript")} ... `);
   await execa("npm", [
     "install",
     "typescript",
-    "@types/node",
+    nodeVersion ? `@types/node@${nodeVersion}` : "@types/node",
     "ts-node",
     "--save-dev"
   ]);
   await execa("tsc", ["--init", "--outDir", "build"]);
-  process.stdout.write("Done\r\n");
+  process.stdout.write("Done" + EOL);
+}
 
+async function automatedCodeFormatting(): Promise<void> {
   process.stdout.write(
     `Installing ${chalk.magenta("prettier / pretty-quick")} ... `
   );
@@ -59,32 +65,54 @@ const scripts = {
     "husky",
     "--save-dev"
   ]);
-  process.stdout.write("Done\r\n");
+  process.stdout.write("Done" + EOL);
+}
 
+async function bootstrapGitignore(): Promise<void> {
   process.stdout.write(`Bootstrapping ${chalk.magenta(".gitignore")} ... `);
   const dest = fs.createWriteStream(".gitignore");
   const res = await fetch("https://gitignore.io/api/node,macos");
   dest.write("build/\r\n\r\n");
   res.body.pipe(dest);
-  process.stdout.write("Done\r\n");
+  process.stdout.write("Done" + EOL);
+}
 
+async function bootstrapSampleCode(dir: string): Promise<void> {
   process.stdout.write(
     `Bootstrapping ${chalk.magenta("'hello world'-sample")} ... `
   );
   fs.mkdirSync(dir + "/src");
   fs.writeFileSync(
     dir + "/src/index.ts",
-    '// happy coding 👻\r\nconsole.log("hello world");'
+    "// happy coding 👻" + EOL + 'console.log("hello world");'
   );
-  process.stdout.write("Done\r\n");
+  process.stdout.write("Done" + EOL);
+}
 
+async function stageFiles(dir: string): Promise<void> {
   process.stdout.write(`Staging ${chalk.magenta("files")} ... `);
   await git.add({ dir, filepath: ".gitignore" });
   await git.add({ dir, filepath: "package.json" });
   await git.add({ dir, filepath: "package-lock.json" });
   await git.add({ dir, filepath: "tsconfig.json" });
   await git.add({ dir, filepath: "src/index.ts" });
-  process.stdout.write("Done\r\n");
+  process.stdout.write("Done" + EOL);
+}
 
-  process.stdout.write("\r\nHappy hacking! 👽 👻 😃\r\n");
+async function happyHacking(): Promise<void> {
+  process.stdout.write(EOL + "Happy hacking! 👽 👻 😃" + EOL);
+}
+
+(async () => {
+  const matchedVersion = process.version.match(/v?([0-9]+)\..*/);
+  const nodeVersion = matchedVersion ? matchedVersion[1] : undefined;
+  const dir = process.cwd();
+  await initializeGitRepository(dir);
+  await bootstrapPackageJson(dir);
+  await installTypescript(nodeVersion);
+  await automatedCodeFormatting();
+  await bootstrapGitignore();
+  await bootstrapSampleCode(dir);
+  await stageFiles(dir);
+  await happyHacking();
 })();
