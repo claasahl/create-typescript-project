@@ -13,17 +13,6 @@ git.plugins.set("fs", fs);
 // the dir where we're doin stuff.
 const dir = process.cwd();
 
-const husky = {
-  hooks: {
-    "pre-commit": "pretty-quick --staged"
-  }
-};
-const scripts = {
-  prepare: "tsc",
-  build: "tsc",
-  start: "ts-node src/index.ts"
-};
-
 async function initializeGitRepository(): Promise<void> {
   try {
     await git.currentBranch({ dir });
@@ -35,6 +24,17 @@ async function initializeGitRepository(): Promise<void> {
 }
 
 async function bootstrapPackageJson(): Promise<void> {
+  const husky = {
+    hooks: {
+      "pre-commit": "pretty-quick --staged"
+    }
+  };
+  const scripts = {
+    prepare: "tsc",
+    build: "tsc",
+    start: "ts-node src/index.ts"
+  };
+
   process.stdout.write(`Bootstrapping ${chalk.magenta("package.json")} ... `);
   await execa("npm", ["init", "--yes"]);
   const packageFile = path.resolve(dir, "package.json");
