@@ -23,7 +23,12 @@ const scripts = {
 
 (async () => {
   git.plugins.set("fs", fs);
-  await git.init({ dir });
+  try {
+    await git.currentBranch({ dir });
+  } catch {
+    // ... probably not a git repository
+    await git.init({ dir });
+  }
 
   process.stdout.write(`Bootstrapping ${chalk.magenta("package.json")} ... `);
   await execa("npm", ["init", "--yes"]);
