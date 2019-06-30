@@ -7,3 +7,5 @@ deploy:
   email: $DEPLOY_NPM_EMAIL
   api_key: $DEPLOY_NPM_API_KEY
   skip_cleanup: true
+  on:
+    tags: true
