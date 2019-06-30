@@ -1,7 +1,8 @@
 # create-typescript-project
 
-![NPM - version](https://img.shields.io/npm/dw/create-typescript-project.svg)
-![NPM - downloads](https://img.shields.io/npm/v/create-typescript-project.svg)
+![TRAVIS - build](https://travis-ci.com/claasahl/create-typescript-project.svg?branch=master)
+![NPM - downloads](https://img.shields.io/npm/dw/create-typescript-project.svg)
+![NPM - version](https://img.shields.io/npm/v/create-typescript-project.svg)
 
 ## TL;DR;
 
