@@ -64,6 +64,23 @@ async function automatedCodeFormatting(): Promise<void> {
   process.stdout.write("Done" + EOL);
 }
 
+async function installedManagedDependencies(
+  nodeVersion?: string
+): Promise<void> {
+  process.stdout.write(
+    `Installing ${chalk.magenta("managed dependencies")} ... `
+  );
+  await execa("npm", [
+    "install",
+    nodeVersion
+      ? `create-typescript-project-dependencies@nodejs-v${nodeVersion}`
+      : "create-typescript-project-dependencies",
+    "--save-dev"
+  ]);
+  await execa("tsc", ["--init", "--outDir", "build"]);
+  process.stdout.write("Done" + EOL);
+}
+
 async function bootstrapGitignore(): Promise<void> {
   process.stdout.write(`Bootstrapping ${chalk.magenta(".gitignore")} ... `);
   const dest = fs.createWriteStream(".gitignore");
@@ -103,10 +120,15 @@ async function happyHacking(): Promise<void> {
   const matchedVersion = process.version.match(/v?([0-9]+)\..*/);
   const nodeVersion = matchedVersion ? matchedVersion[1] : undefined;
   const dir = process.cwd();
+  const managed = process.argv.length > 2 && process.argv[2] === "--managed";
   await initializeGitRepository(dir);
   await bootstrapPackageJson(dir);
-  await installTypescript(nodeVersion);
-  await automatedCodeFormatting();
+  if (managed) {
+    await installedManagedDependencies(nodeVersion);
+  } else {
+    await installTypescript(nodeVersion);
+    await automatedCodeFormatting();
+  }
   await bootstrapGitignore();
   await bootstrapSampleCode(dir);
   await stageFiles(dir);
