@@ -4,7 +4,6 @@
   "description": "create simple, opiniated typescript projects",
   "bin": {
     "create-typescript-project": "build/index.js",
-    "create-typescript-project-build": "build/script-build.js",
     "create-typescript-project-hello-world": "build/script-hello-world.js"
   },
   "scripts": {
