@@ -77,7 +77,7 @@ async function installedManagedDependencies(
       : "create-typescript-project-dependencies",
     "--save-dev"
   ]);
-  await execa("tsc", ["--init", "--outDir", "build"]);
+  await execa("npx", ["tsc", "--init", "--outDir", "build"]);
   process.stdout.write("Done" + EOL);
 }
 
