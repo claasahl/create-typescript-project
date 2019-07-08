@@ -46,7 +46,7 @@ async function installTypescript(nodeVersion?: string): Promise<void> {
     "ts-node",
     "--save-dev"
   ]);
-  await execa("tsc", ["--init", "--outDir", "build"]);
+  await execa("npx", ["tsc", "--init", "--outDir", "build"]);
   process.stdout.write("Done" + EOL);
 }
 
