@@ -1,0 +1,23 @@
+name: Deploy to NPM
+
+on:
+  push:
+    branches: # Array of patterns that match refs/heads
+      - master # Push events on master branch
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v1
+      - name: Setup node
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12
+      - run: echo "//registry.npmjs.org/:_authToken=${NPM_DEPLOY_TOKEN}" > .npmrc
+        env:
+          NPM_DEPLOY_TOKEN: ${{ secrets.NPM_DEPLOY_TOKEN }}
+      - run: npm install
+      - run: npm test
+      - run: npm publish --access public
