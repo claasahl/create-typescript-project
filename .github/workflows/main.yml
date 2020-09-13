@@ -14,7 +14,7 @@ jobs:
       - name: Setup node
         uses: actions/setup-node@v1
         with:
-          node-version: 12
+          node-version: 13
       - run: echo "//registry.npmjs.org/:_authToken=${NPM_DEPLOY_TOKEN}" > .npmrc
         env:
           NPM_DEPLOY_TOKEN: ${{ secrets.NPM_DEPLOY_TOKEN }}
