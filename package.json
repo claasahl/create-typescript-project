@@ -43,7 +43,7 @@
   },
   "dependencies": {
     "@types/jsonfile": "^5.0.1",
-    "@types/node": "^10.17.32",
+    "@types/node": "^13.13.19",
     "chalk": "^2.4.2",
     "execa": "^2.1.0",
     "husky": "^2.7.0",
