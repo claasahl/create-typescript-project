@@ -21,18 +21,20 @@ async function initializeGitRepository(dir: string): Promise<void> {
 }
 
 async function bootstrapPackageJson(dir: string): Promise<void> {
-  const scripts = {
-    precommit: "pretty-quick --staged",
-    prepare: "tsc",
-    build: "tsc",
-    start: "ts-node src/index.ts"
+  const baseJson = {
+    scripts: { prepare: "tsc", build: "tsc", start: "ts-node src/index.ts" },
+    husky: {
+      hooks: {
+        "pre-commit": "pretty-quick --staged"
+      }
+    }
   };
 
   process.stdout.write(`Bootstrapping ${chalk.magenta("package.json")} ... `);
   await execa("npm", ["init", "--yes"]);
   const packageFile = path.resolve(dir, "package.json");
   const packageJson = await jsonfile.readFile(packageFile);
-  packageJson.scripts = { ...packageJson.scripts, ...scripts };
+  Object.assign(packageJson, baseJson);
   await jsonfile.writeFile(packageFile, packageJson);
   process.stdout.write("Done" + EOL);
 }
