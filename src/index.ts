@@ -3,20 +3,18 @@ import execa from "execa";
 import path from "path";
 import fs from "fs";
 import fetch from "node-fetch";
-import * as git from "isomorphic-git";
+import git from "isomorphic-git";
 import chalk from "chalk";
 import jsonfile from "jsonfile";
 import { EOL } from "os";
 
-git.plugins.set("fs", fs);
-
 async function initializeGitRepository(dir: string): Promise<void> {
   try {
-    await git.currentBranch({ dir });
+    await git.currentBranch({ fs, dir });
     // ... probably already a git repository
   } catch {
     // ... probably not a git repository
-    await git.init({ dir });
+    await git.init({ fs, dir });
   }
 }
 
@@ -25,12 +23,12 @@ async function bootstrapPackageJson(dir: string): Promise<void> {
     scripts: { prepare: "tsc", build: "tsc", start: "ts-node src/index.ts" },
     husky: {
       hooks: {
-        "pre-commit": "pretty-quick --staged"
-      }
-    }
+        "pre-commit": "pretty-quick --staged",
+      },
+    },
   };
 
-  process.stdout.write(`Bootstrapping ${chalk.magenta("package.json")} ... `);
+  process.stdout.write(`Bootstrapping ${chalk.red("package.json")} ... `);
   await execa("npm", ["init", "--yes"]);
   const packageFile = path.resolve(dir, "package.json");
   const packageJson = await jsonfile.readFile(packageFile);
@@ -40,13 +38,13 @@ async function bootstrapPackageJson(dir: string): Promise<void> {
 }
 
 async function installTypescript(nodeVersion?: string): Promise<void> {
-  process.stdout.write(`Installing ${chalk.magenta("typescript")} ... `);
+  process.stdout.write(`Installing ${chalk.red("typescript")} ... `);
   await execa("npm", [
     "install",
     "typescript",
     nodeVersion ? `@types/node@${nodeVersion}` : "@types/node",
     "ts-node",
-    "--save-dev"
+    "--save-dev",
   ]);
   await execa("npx", ["tsc", "--init", "--outDir", "build"]);
   process.stdout.write("Done" + EOL);
@@ -54,14 +52,14 @@ async function installTypescript(nodeVersion?: string): Promise<void> {
 
 async function automatedCodeFormatting(): Promise<void> {
   process.stdout.write(
-    `Installing ${chalk.magenta("prettier / pretty-quick")} ... `
+    `Installing ${chalk.red("prettier / pretty-quick")} ... `
   );
   await execa("npm", [
     "install",
     "prettier",
     "pretty-quick",
     "husky",
-    "--save-dev"
+    "--save-dev",
   ]);
   process.stdout.write("Done" + EOL);
 }
@@ -69,22 +67,20 @@ async function automatedCodeFormatting(): Promise<void> {
 async function installedManagedDependencies(
   nodeVersion?: string
 ): Promise<void> {
-  process.stdout.write(
-    `Installing ${chalk.magenta("managed dependencies")} ... `
-  );
+  process.stdout.write(`Installing ${chalk.red("managed dependencies")} ... `);
   await execa("npm", [
     "install",
     nodeVersion
       ? `create-typescript-project-dependencies@nodejs-v${nodeVersion}`
       : "create-typescript-project-dependencies",
-    "--save-dev"
+    "--save-dev",
   ]);
   await execa("npx", ["tsc", "--init", "--outDir", "build"]);
   process.stdout.write("Done" + EOL);
 }
 
 async function bootstrapGitignore(): Promise<void> {
-  process.stdout.write(`Bootstrapping ${chalk.magenta(".gitignore")} ... `);
+  process.stdout.write(`Bootstrapping ${chalk.red(".gitignore")} ... `);
   const dest = fs.createWriteStream(".gitignore");
   const res = await fetch("https://gitignore.io/api/node,macos");
   dest.write("build/\r\n\r\n");
@@ -94,7 +90,7 @@ async function bootstrapGitignore(): Promise<void> {
 
 async function bootstrapSampleCode(dir: string): Promise<void> {
   process.stdout.write(
-    `Bootstrapping ${chalk.magenta("'hello world'-sample")} ... `
+    `Bootstrapping ${chalk.red("'hello world'-sample")} ... `
   );
   fs.mkdirSync(dir + "/src");
   fs.writeFileSync(
@@ -105,12 +101,12 @@ async function bootstrapSampleCode(dir: string): Promise<void> {
 }
 
 async function stageFiles(dir: string): Promise<void> {
-  process.stdout.write(`Staging ${chalk.magenta("files")} ... `);
-  await git.add({ dir, filepath: ".gitignore" });
-  await git.add({ dir, filepath: "package.json" });
-  await git.add({ dir, filepath: "package-lock.json" });
-  await git.add({ dir, filepath: "tsconfig.json" });
-  await git.add({ dir, filepath: "src/index.ts" });
+  process.stdout.write(`Staging ${chalk.red("files")} ... `);
+  await git.add({ fs, dir, filepath: ".gitignore" });
+  await git.add({ fs, dir, filepath: "package.json" });
+  await git.add({ fs, dir, filepath: "package-lock.json" });
+  await git.add({ fs, dir, filepath: "tsconfig.json" });
+  await git.add({ fs, dir, filepath: "src/index.ts" });
   process.stdout.write("Done" + EOL);
 }
 
