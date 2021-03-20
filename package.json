@@ -34,7 +34,9 @@
   "devDependencies": {
     "@types/jsonfile": "^6.0.0",
     "@types/node-fetch": "^2.5.8",
-    "husky": "^5.1.3"
+    "husky": "^5.1.3",
+    "prettier": "^2.2.1",
+    "pretty-quick": "^3.1.0"
   },
   "dependencies": {
     "@types/node": "^14.14.35",
@@ -43,8 +45,6 @@
     "isomorphic-git": "^0.55.6",
     "jsonfile": "^6.1.0",
     "node-fetch": "^2.6.1",
-    "prettier": "^1.19.1",
-    "pretty-quick": "^1.11.1",
     "typescript": "^4.2.3"
   }
 }
