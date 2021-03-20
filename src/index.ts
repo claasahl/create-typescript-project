@@ -30,7 +30,7 @@ async function bootstrapPackageJson(dir: string): Promise<void> {
     }
   };
 
-  process.stdout.write(`Bootstrapping ${chalk.magenta("package.json")} ... `);
+  process.stdout.write(`Bootstrapping ${chalk.green("package.json")} ... `);
   await execa("npm", ["init", "--yes"]);
   const packageFile = path.resolve(dir, "package.json");
   const packageJson = await jsonfile.readFile(packageFile);
@@ -40,7 +40,7 @@ async function bootstrapPackageJson(dir: string): Promise<void> {
 }
 
 async function installTypescript(nodeVersion?: string): Promise<void> {
-  process.stdout.write(`Installing ${chalk.magenta("typescript")} ... `);
+  process.stdout.write(`Installing ${chalk.green("typescript")} ... `);
   await execa("npm", [
     "install",
     "typescript",
@@ -54,7 +54,7 @@ async function installTypescript(nodeVersion?: string): Promise<void> {
 
 async function automatedCodeFormatting(): Promise<void> {
   process.stdout.write(
-    `Installing ${chalk.magenta("prettier / pretty-quick")} ... `
+    `Installing ${chalk.green("prettier / pretty-quick")} ... `
   );
   await execa("npm", [
     "install",
@@ -70,7 +70,7 @@ async function installedManagedDependencies(
   nodeVersion?: string
 ): Promise<void> {
   process.stdout.write(
-    `Installing ${chalk.magenta("managed dependencies")} ... `
+    `Installing ${chalk.green("managed dependencies")} ... `
   );
   await execa("npm", [
     "install",
@@ -84,7 +84,7 @@ async function installedManagedDependencies(
 }
 
 async function bootstrapGitignore(): Promise<void> {
-  process.stdout.write(`Bootstrapping ${chalk.magenta(".gitignore")} ... `);
+  process.stdout.write(`Bootstrapping ${chalk.green(".gitignore")} ... `);
   const dest = fs.createWriteStream(".gitignore");
   const res = await fetch("https://gitignore.io/api/node,macos");
   dest.write("build/\r\n\r\n");
@@ -94,7 +94,7 @@ async function bootstrapGitignore(): Promise<void> {
 
 async function bootstrapSampleCode(dir: string): Promise<void> {
   process.stdout.write(
-    `Bootstrapping ${chalk.magenta("'hello world'-sample")} ... `
+    `Bootstrapping ${chalk.green("'hello world'-sample")} ... `
   );
   fs.mkdirSync(dir + "/src");
   fs.writeFileSync(
@@ -105,7 +105,7 @@ async function bootstrapSampleCode(dir: string): Promise<void> {
 }
 
 async function stageFiles(dir: string): Promise<void> {
-  process.stdout.write(`Staging ${chalk.magenta("files")} ... `);
+  process.stdout.write(`Staging ${chalk.green("files")} ... `);
   await git.add({ dir, filepath: ".gitignore" });
   await git.add({ dir, filepath: "package.json" });
   await git.add({ dir, filepath: "package-lock.json" });
