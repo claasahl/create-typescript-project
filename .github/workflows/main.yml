@@ -3,7 +3,7 @@ name: Deploy to NPM
 on:
   push:
     branches: # Array of patterns that match refs/heads
-      - master # Push events on master branch
+      - testing # Push events on master branch
 
 jobs:
   deploy:
@@ -18,6 +18,4 @@ jobs:
       - run: echo "//registry.npmjs.org/:_authToken=${NPM_DEPLOY_TOKEN}" > .npmrc
         env:
           NPM_DEPLOY_TOKEN: ${{ secrets.NPM_DEPLOY_TOKEN }}
-      - run: npm install
-      - run: npm test
-      - run: npm publish --access public
+      - run: npm profile
